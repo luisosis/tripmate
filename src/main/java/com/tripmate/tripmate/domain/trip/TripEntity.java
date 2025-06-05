@@ -1,5 +1,8 @@
 package com.tripmate.tripmate.domain.trip;
 
+import com.tripmate.tripmate.domain.expense.ExpenseEntity;
+import com.tripmate.tripmate.domain.itinerary.ItineraryEntity;
+import com.tripmate.tripmate.domain.place.PlaceEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "trip")
@@ -36,4 +41,16 @@ public class TripEntity {
     @CreationTimestamp
     @Column(name = "create_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.EAGER)
+    private List<ItineraryEntity> itineraries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<ExpenseEntity> expenses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<PlaceEntity> places = new ArrayList<>();
 }
