@@ -16,7 +16,7 @@ public class TripRepositoryImpl implements TripRepository {
     @Override
     public Observable<Trip> getTrips() {
         return Observable.fromIterable(tripJpaRepository.findAll())
-                .subscribeOn(Schedulers.io())
+                //.subscribeOn(Schedulers.io())
                 //.flatMap(Observable::fromIterable)
                 .map(tripEntity -> Trip.builder()
                         .title(tripEntity.getTitle())
@@ -31,7 +31,7 @@ public class TripRepositoryImpl implements TripRepository {
     @Override
     public Maybe<Trip> getTripById(Long id) {
         return Maybe.fromOptional(tripJpaRepository.findById(id))
-                .subscribeOn(Schedulers.io())
+                //.subscribeOn(Schedulers.io())
                 .map(tripEntity -> Trip.builder()
                         .title(tripEntity.getTitle())
                         .description(tripEntity.getDescription())
