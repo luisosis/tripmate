@@ -1,9 +1,12 @@
 package com.tripmate.tripmate.infrastructure.repository.trip;
 
+import com.tripmate.tripmate.domain.mapper.TripMapper;
 import com.tripmate.tripmate.domain.trip.Trip;
+import com.tripmate.tripmate.domain.trip.TripEntity;
 import com.tripmate.tripmate.domain.trip.TripRepository;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,21 +15,16 @@ import org.springframework.stereotype.Repository;
 public class TripRepositoryImpl implements TripRepository {
 
     private final TripJpaRepository tripJpaRepository;
+    private final TripMapper tripMapper;
 
     @Override
     public Observable<Trip> getTrips() {
         return Observable.fromIterable(tripJpaRepository.findAll())
-                //.subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 //.flatMap(Observable::fromIterable)
-                .map(tripEntity -> Trip.builder()
-                        .title(tripEntity.getTitle())
-                        .description(tripEntity.getDescription())
-                        .destinationCity(tripEntity.getDestinationCity())
-                        .destinationCountry(tripEntity.getDestinationCountry())
-                        .startDate(tripEntity.getStartDate())
-                        .endDate(tripEntity.getEndDate())
-                        .build());
+                .map(tripMapper::toDto);
     }
+
 
     @Override
     public Maybe<Trip> getTripById(Long id) {
