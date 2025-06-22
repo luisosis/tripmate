@@ -4,14 +4,13 @@ import com.tripmate.tripmate.application.trip.TripUseCase;
 import com.tripmate.tripmate.domain.User;
 import com.tripmate.tripmate.domain.trip.Trip;
 import com.tripmate.tripmate.domain.trip.TripAuxiliar;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +32,11 @@ public class TripController {
     @GetMapping("/{id}/details")
     public Maybe<TripAuxiliar> getTripDetails(@PathVariable Long id){
         return tripUseCase.getTripById(id);
+    }
+
+    @PostMapping("/save")
+    public Completable save(@Valid @RequestBody Trip trip) {
+        return tripUseCase.save(trip);
     }
 
     private void demoTest() {

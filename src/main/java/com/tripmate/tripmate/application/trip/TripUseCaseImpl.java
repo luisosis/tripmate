@@ -5,6 +5,7 @@ import com.tripmate.tripmate.domain.trip.Exchange;
 import com.tripmate.tripmate.domain.trip.Trip;
 import com.tripmate.tripmate.domain.trip.TripAuxiliar;
 import com.tripmate.tripmate.domain.trip.TripRepository;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class TripUseCaseImpl implements TripUseCase{
         return getUsdToPenExchange()
                 .flatMap(exchange -> tripRepository.getTripById(id)
                         .map(trip -> tripMapper.toAssistant(exchange, trip)));
+    }
+
+    @Override
+    public Completable save(Trip trip) {
+        return Completable.complete();
     }
 
     private static TripAuxiliar getBuild(Exchange exchange, Trip trip) {
