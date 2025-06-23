@@ -9,4 +9,6 @@ public interface TripRepository {
     Observable<Trip> getTrips();
 
     Maybe<Trip> getTripById(Long id);
+
+    Maybe<Trip> getTripByTittle(String tittle);
 }

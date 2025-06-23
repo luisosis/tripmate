@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -32,6 +31,11 @@ public class TripController {
     @GetMapping("/{id}/details")
     public Maybe<TripAuxiliar> getTripDetails(@PathVariable Long id){
         return tripUseCase.getTripById(id);
+    }
+
+    @GetMapping("/trip")
+    public Maybe<TripAuxiliar> getTripByParams(@RequestParam String title){
+        return tripUseCase.getTripByParams(title);
     }
 
     @PostMapping("/save")
