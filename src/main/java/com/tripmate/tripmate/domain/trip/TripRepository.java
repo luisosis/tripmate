@@ -1,5 +1,6 @@
 package com.tripmate.tripmate.domain.trip;
 
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ public interface TripRepository {
     Maybe<Trip> getTripById(Long id);
 
     Maybe<Trip> getTripByTittle(String tittle);
+
+    Completable save(Trip trip);
 }

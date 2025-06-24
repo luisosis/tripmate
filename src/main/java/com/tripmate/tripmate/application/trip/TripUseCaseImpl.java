@@ -6,6 +6,7 @@ import com.tripmate.tripmate.domain.trip.Exchange;
 import com.tripmate.tripmate.domain.trip.Trip;
 import com.tripmate.tripmate.domain.trip.TripAuxiliar;
 import com.tripmate.tripmate.domain.trip.TripRepository;
+import com.tripmate.tripmate.infrastructure.kafka.KafkaProducerService;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
@@ -23,6 +24,7 @@ public class TripUseCaseImpl implements TripUseCase{
     private final WebClient webClient;
     private final TripMapper tripMapper;
     private final Cache<String, TripAuxiliar> tripCache;
+    private final KafkaProducerService producerService;
 
     @Override
     public Observable<Trip> getTrips() {
@@ -59,7 +61,9 @@ public class TripUseCaseImpl implements TripUseCase{
 
     @Override
     public Completable save(Trip trip) {
-        return Completable.complete();
+        return tripRepository.save(trip)
+                .andThen(producerService.sendMessageRx("Bienvenido nuevo trip: "
+                        + trip.getTitle()));
     }
 
     private static TripAuxiliar getBuild(Exchange exchange, Trip trip) {
