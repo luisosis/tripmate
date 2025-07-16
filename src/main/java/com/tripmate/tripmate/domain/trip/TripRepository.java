@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TripRepository {
 
-    Observable<Trip> getTrips();
+    Observable<TripResponse> getTrips();
 
-    Maybe<Trip> getTripById(Long id);
+    Maybe<TripResponse> getTripById(Long id);
 
     Maybe<Trip> getTripByTittle(String tittle);
 
-    Completable save(Trip trip);
+    Completable save(TripRecord trip);
 }

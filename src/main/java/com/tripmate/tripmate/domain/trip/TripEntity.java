@@ -1,5 +1,6 @@
 package com.tripmate.tripmate.domain.trip;
 
+import com.tripmate.tripmate.domain.TripType;
 import com.tripmate.tripmate.domain.expense.ExpenseEntity;
 import com.tripmate.tripmate.domain.itinerary.ItineraryEntity;
 import com.tripmate.tripmate.domain.place.PlaceEntity;
@@ -41,6 +42,10 @@ public class TripEntity {
     @CreationTimestamp
     @Column(name = "create_at")
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trip_type")
+    private TripType tripType;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true,
             fetch = FetchType.EAGER)

@@ -1,17 +1,14 @@
 package com.tripmate.tripmate.domain.mapper;
 
-import com.tripmate.tripmate.domain.trip.Exchange;
-import com.tripmate.tripmate.domain.trip.Trip;
-import com.tripmate.tripmate.domain.trip.TripAuxiliar;
-import com.tripmate.tripmate.domain.trip.TripEntity;
+import com.tripmate.tripmate.domain.trip.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TripMapper {
 
-    Trip toDto(TripEntity entity);
-    TripEntity toEntity(Trip trip);
+    TripResponse toDto(TripEntity entity);
+    TripEntity toEntity(TripRecord trip);
 
     @Mapping(source = "trip.title", target = "title")
     @Mapping(source = "trip.description", target = "description")

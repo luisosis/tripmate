@@ -2,16 +2,12 @@ package com.tripmate.tripmate.application.trip;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.tripmate.tripmate.domain.mapper.TripMapper;
-import com.tripmate.tripmate.domain.trip.Exchange;
-import com.tripmate.tripmate.domain.trip.Trip;
-import com.tripmate.tripmate.domain.trip.TripAuxiliar;
-import com.tripmate.tripmate.domain.trip.TripRepository;
+import com.tripmate.tripmate.domain.trip.*;
 import com.tripmate.tripmate.infrastructure.kafka.KafkaProducerService;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.adapter.rxjava.RxJava3Adapter;
@@ -27,19 +23,15 @@ public class TripUseCaseImpl implements TripUseCase{
     private final KafkaProducerService producerService;
 
     @Override
-    public Observable<Trip> getTrips() {
+    public Observable<TripResponse> getTrips() {
         return tripRepository.getTrips();
     }
 
-
     @Override
-    public Maybe<TripAuxiliar> getTripById(Long idTrip) {
-        return getUsdToPenExchange()
-                .flatMap(exchange -> tripRepository.getTripById(idTrip)
-                        .map(trip -> tripMapper.toAssistant(exchange, trip)));
+    public Maybe<TripResponse> getTripById(Long idTrip) {
+        return tripRepository.getTripById(idTrip);
     }
 
-    //@Cacheable(value = "trip_assistant", key = "#title")
     @Override
     public Maybe<TripAuxiliar> getTripByParams(String title) {
 
@@ -60,10 +52,23 @@ public class TripUseCaseImpl implements TripUseCase{
     }
 
     @Override
-    public Completable save(Trip trip) {
-        return tripRepository.save(trip)
-                .andThen(producerService.sendMessageRx("Bienvenido nuevo trip: "
-                        + trip.getTitle()));
+    public Completable save(TripRecord trip) {
+        return tripRepository.save(trip);
+//                .andThen(producerService.sendMessageRx("Bienvenido nuevo trip: "
+//                        + trip.title()));
+    }
+
+    @Override
+    public Maybe<String> calculateTaxes(Long id) {
+        return tripRepository.getTripById(id)
+                .map(this::getTypeTaxes);
+    }
+
+    private String getTypeTaxes(TripResponse tripResponse) {
+        return switch (tripResponse.tripType()){
+            case PLACER -> "Aplicar impuestos por placer";
+            case NEGOCIO -> "Aplicar impuestos por negocio";
+        };
     }
 
     private static TripAuxiliar getBuild(Exchange exchange, Trip trip) {
