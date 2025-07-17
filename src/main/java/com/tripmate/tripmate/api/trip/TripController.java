@@ -1,4 +1,4 @@
-package com.tripmate.tripmate.api.trip;
+    package com.tripmate.tripmate.api.trip;
 
 import com.tripmate.tripmate.application.trip.TripUseCase;
 import com.tripmate.tripmate.domain.trip.Trip;
@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.internal.operators.single.SingleFromCallable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,28 +26,44 @@ public class TripController {
 
     @GetMapping
     public Observable<TripResponse> getTrips() {
+        log.info("GET /api/v1/trip - get List trips");
         return tripUseCase.getTrips();
     }
 
     @GetMapping("/{id}/details")
     public Maybe<TripResponse> getTripDetails(@PathVariable Long id) {
-        return tripUseCase.getTripById(id);
+        log.info("GET /api/v1/trip/{}/details - Obtain detail trip", id);
+        return tripUseCase.getTripById(id)
+                .doOnError(thr ->
+                        log.error("Error obtaint detail with id {}: {}", id, thr.getMessage()));
     }
 
     @GetMapping("/trip")
     public Maybe<TripAuxiliar> getTripByParams(@RequestParam String title) {
-        return tripUseCase.getTripByParams(title);
+        log.debug("GET /api/v1/trip/trip?title={} - Buscando viaje por título", title);
+        return tripUseCase.getTripByParams(title)
+                .doOnComplete(() -> log.info("Búsqueda completada para título: {}", title))
+                .doOnError(e ->
+                        log.error("Error buscando viaje por título '{}': {}", title, e.getMessage()));
     }
 
     @PostMapping("/save")
     public Completable save(@Valid @RequestBody TripRecord trip) {
+        log.info("POST /api/v1/trip/save - Guardando nuevo viaje: {}", trip.title());
         return tripUseCase.save(trip);
     }
 
     @GetMapping("/{id}/taxes")
     public Single<ResponseEntity<String>> calculateTaxes(@PathVariable Long id) {
+        log.info("GET /api/v1/trip/{}/taxes - Calculando impuestos", id);
         return tripUseCase.calculateTaxes(id)
+                .doOnError(e ->
+                        log.error("Error calculando impuestos para tripId {}: {}", id, e.getMessage()))
                 .map(ResponseEntity::ok)
-                .switchIfEmpty(Single.just(ResponseEntity.notFound().build()));
+                .switchIfEmpty(Single.fromCallable(() -> {
+                    log.warn("No se encontraron impuestos para el trip con id {}", id);
+                    return ResponseEntity.notFound().build();
+                }));
+                //.switchIfEmpty(Single.just(ResponseEntity.notFound().build()));
     }
 }

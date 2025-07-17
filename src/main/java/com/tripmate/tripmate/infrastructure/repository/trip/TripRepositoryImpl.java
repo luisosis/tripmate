@@ -1,6 +1,5 @@
 package com.tripmate.tripmate.infrastructure.repository.trip;
 
-import com.tripmate.tripmate.domain.TripType;
 import com.tripmate.tripmate.domain.mapper.TripMapper;
 import com.tripmate.tripmate.domain.trip.Trip;
 import com.tripmate.tripmate.domain.trip.TripRecord;
@@ -14,8 +13,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDate;
 
 @Repository
 @RequiredArgsConstructor
