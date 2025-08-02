@@ -1,4 +1,4 @@
-    package com.tripmate.tripmate.api.trip;
+package com.tripmate.tripmate.api.trip;
 
 import com.tripmate.tripmate.application.trip.TripUseCase;
 import com.tripmate.tripmate.domain.trip.Trip;
@@ -64,6 +64,5 @@ public class TripController {
                     log.warn("No se encontraron impuestos para el trip con id {}", id);
                     return ResponseEntity.notFound().build();
                 }));
-                //.switchIfEmpty(Single.just(ResponseEntity.notFound().build()));
     }
 }
